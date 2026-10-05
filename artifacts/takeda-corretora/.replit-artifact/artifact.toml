@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Takeda Corretora"
+description = "Site institucional da Takeda Corretora com apresentação de seguros e previdência, contato e orientações para clientes."
+version = "1.0.0"
+id = "artifacts/takeda-corretora"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22360
+
+[services.development]
+run = "pnpm --filter @workspace/takeda-corretora run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/takeda-corretora", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/takeda-corretora/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22360"
+BASE_PATH = "/"

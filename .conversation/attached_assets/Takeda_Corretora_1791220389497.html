@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Takeda Corretora | Seguro de vida e previdência</title>
+<meta name="description" content="Seguro de vida e previdência privada com atendimento personalizado e explicações sem juridiquês.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f4f2;--bg2:#e9eef2;--card:#fff;--ink:#1a2455;--tx:#33405a;--mut:#5d6a80;--blue:#12587f;--blue2:#0d4463;--line:#d5dde4;--hdr:rgba(244,244,242,.92);
+--serif:'Fraunces',Georgia,'Times New Roman',serif;--sans:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a26;--bg2:#13263a;--card:#162c42;--ink:#eef3f7;--tx:#c5d1dc;--mut:#93a4b5;--blue:#4aa3d1;--blue2:#7bbfe3;--line:#26425c;--hdr:rgba(14,26,38,.92)}}
+:root[data-theme="dark"]{--bg:#0e1a26;--bg2:#13263a;--card:#162c42;--ink:#eef3f7;--tx:#c5d1dc;--mut:#93a4b5;--blue:#4aa3d1;--blue2:#7bbfe3;--line:#26425c;--hdr:rgba(14,26,38,.92)}
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top,0px));scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.65 var(--sans)}
+img,svg{max-width:100%}
+a{color:inherit}
+h1,h2,h3{font-family:var(--serif);color:var(--ink);line-height:1.12;margin:0;font-weight:600}
+h1{font-size:clamp(2.2rem,6vw,4rem)}h2{font-size:clamp(1.8rem,4vw,2.7rem)}h3{font-size:1.3rem}
+em{font-style:italic;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px;text-decoration-color:var(--blue)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+section{padding:84px 0}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--blue);margin-bottom:14px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:1.5px solid var(--blue);background:var(--blue);color:#fff;font:700 .95rem var(--sans);text-decoration:none;cursor:pointer;transition:background .2s,transform .2s}
+.btn:hover{background:var(--blue2);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--blue)}.btn.ghost:hover{background:var(--bg2)}
+header{position:sticky;top:0;z-index:20;background:var(--hdr);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{font:600 1.25rem var(--serif);color:var(--ink);text-decoration:none;letter-spacing:.02em}
+.logo span{color:var(--blue);font-style:italic}
+nav ul{display:flex;gap:26px;list-style:none;margin:0;padding:0;font-size:.95rem}
+nav a{text-decoration:none}nav a:hover{color:var(--blue)}
+.menu{display:none;background:none;border:1px solid var(--line);border-radius:10px;width:44px;height:44px;color:var(--ink);font-size:1.3rem}
+.hero{padding:72px 0 90px;background:radial-gradient(circle,var(--line) 1px,transparent 1.5px) 0 0/22px 22px}
+.hero-g{display:grid;grid-template-columns:1.25fr 1fr;gap:56px;align-items:center}
+.hero p.lead{font-size:1.15rem;max-width:34em;margin:22px 0 30px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.photo{border-radius:6px 90px 6px 6px;min-height:430px;background:linear-gradient(160deg,var(--blue),#0a2f47);color:#fff;display:flex;align-items:flex-end;padding:24px;font-size:.85rem;opacity:.96}
+.photo small{background:rgba(0,0,0,.35);padding:6px 12px;border-radius:999px}
+.myths{background:var(--blue);color:#e8f1f6}
+.myths h2,.myths .eyebrow{color:#fff}
+.myth-list{margin-top:40px;border-top:1px solid rgba(255,255,255,.25)}
+.myth{display:grid;grid-template-columns:1fr 1.4fr;gap:30px;padding:26px 0;border-bottom:1px solid rgba(255,255,255,.25)}
+.myth b{font:italic 500 1.35rem var(--serif);color:#fff}
+.split{display:grid;grid-template-columns:1fr 1.2fr;gap:60px}
+.split p{margin:0 0 16px}
+.tick{list-style:none;padding:0;margin:20px 0 0}
+.tick li{padding:12px 0 12px 30px;border-bottom:1px solid var(--line);position:relative}
+.tick li:before{content:"";position:absolute;left:0;top:21px;width:14px;height:2px;background:var(--blue)}
+.tw{overflow-x:auto;margin-top:34px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.96rem}
+th,td{text-align:left;padding:16px 20px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 1rem var(--serif);color:var(--ink);background:var(--bg2)}
+tr:last-child td{border-bottom:0}td:first-child{font-weight:700;color:var(--ink)}
+.alt{background:var(--bg2)}
+.steps{margin-top:40px;position:relative;padding-left:34px;border-left:2px solid var(--blue)}
+.step{position:relative;padding-bottom:34px}
+.step:before{content:"";position:absolute;left:-43px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--bg2);border:3px solid var(--blue)}
+.step b{font:600 1.25rem var(--serif);color:var(--ink);display:block;margin-bottom:4px}
+.about{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:center}
+.about .photo{min-height:380px;border-radius:90px 6px 6px 6px}
+details{border-bottom:1px solid var(--line);padding:20px 0}
+summary{cursor:pointer;font:600 1.15rem var(--serif);color:var(--ink);list-style:none;display:flex;justify-content:space-between;gap:20px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--blue);font-size:1.5rem;line-height:1}
+details[open] summary:after{content:"–"}
+details p{margin:12px 0 0;max-width:46em}
+.contact{display:grid;grid-template-columns:1fr 1.1fr;gap:56px}
+form{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:30px;display:grid;gap:16px}
+label{font-size:.88rem;font-weight:700;color:var(--ink);display:grid;gap:6px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;min-height:46px;width:100%}
+input:focus,select:focus,textarea:focus,.btn:focus-visible,summary:focus-visible,a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:.85rem;color:var(--mut)}
+.chk input{width:20px;min-height:20px;margin-top:2px}
+.ok{display:none;padding:16px;border-radius:8px;background:var(--bg2);color:var(--ink);font-weight:500}
+footer{background:#0d2a3d;color:#b9c9d6;padding:54px 0 36px;font-size:.9rem}
+footer .logo{color:#fff}
+.fg{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.fg p{margin:6px 0 0;max-width:34em}
+/* chat */
+#cb{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:40}
+#cbtn{border:0;border-radius:999px;background:var(--blue);color:#fff;min-height:54px;padding:0 24px;font:700 .95rem var(--sans);cursor:pointer;box-shadow:0 6px 20px rgba(13,68,99,.35)}
+#cw{display:none;position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:380px;max-width:calc(100vw - 24px);height:min(560px,calc(100% - 100px));background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 40px rgba(10,30,50,.3);flex-direction:column;overflow:hidden;z-index:41}
+#cw.open{display:flex}
+.ch{background:var(--blue);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;font:600 1.05rem var(--serif)}
+.ch button{background:none;border:0;color:#fff;font-size:1.4rem;cursor:pointer;width:40px;height:40px}
+#cm{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:85%;padding:10px 14px;border-radius:14px;font-size:.95rem;line-height:1.45}
+.m.b{background:var(--bg2);color:var(--ink);border-bottom-left-radius:4px;align-self:flex-start}
+.m.u{background:var(--blue);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+#co{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 10px}
+#co button{border:1.5px solid var(--blue);background:transparent;color:var(--blue);border-radius:999px;padding:8px 14px;font:500 .88rem var(--sans);cursor:pointer;min-height:40px}
+#co button:hover{background:var(--bg2)}
+#cf{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+#ci{flex:1}
+/* admin */
+#adm{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);overflow:auto;padding:calc(24px + env(safe-area-inset-top,0px)) 22px 40px}
+#adm.on{display:block}
+.ad{max-width:1000px;margin:0 auto}
+.ad .tw table{min-width:720px}
+.ad select{min-height:36px;padding:4px 8px;width:auto}
+.badge{display:inline-block;background:var(--blue);color:#fff;border-radius:999px;font-size:.72rem;padding:2px 10px;margin-left:6px}
+@media(max-width:860px){
+.menu{display:block}
+nav ul{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 22px 16px}
+nav ul.show{display:flex}nav li a{display:block;padding:13px 0}
+.hero-g,.split,.about,.contact,.myth{grid-template-columns:1fr;gap:28px}
+.photo{min-height:280px}section{padding:60px 0}
+#cw{inset:0;width:100%;max-width:none;height:100%;border-radius:0;right:0;bottom:0}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="logo" href="#top">Takeda <span>Corretora</span></a>
+<nav><button class="menu" id="mb" aria-label="Abrir menu" aria-expanded="false">☰</button>
+<ul id="ml"><li><a href="#mitos">Mitos</a></li><li><a href="#vida">Seguro de vida</a></li><li><a href="#prev">Previdência</a></li><li><a href="#sobre">Sobre</a></li><li><a href="#faq">Dúvidas</a></li><li><a href="#contato">Contato</a></li></ul></nav>
+</div></header>
+<main id="top">
+<section class="hero"><div class="wrap hero-g">
+<div><div class="eyebrow">Seguro · Previdência · Confiança</div>
+<h1>Você já parou para pensar <em>quanto custa</em> deixar quem você ama desprotegido?</h1>
+<p class="lead">Cuidamos do seu futuro com responsabilidade e visão. Explicamos seguro de vida e previdência privada do jeito que deveria ser: claro, honesto e sem letra miúda escondida.</p>
+<div class="cta"><a class="btn" href="#contato">Pedir uma cotação</a><a class="btn ghost" href="#" data-wa>Falar no WhatsApp</a></div></div>
+<div class="photo" role="img" aria-label="Espaço reservado para a foto da corretora"><small>Foto da corretora aqui</small></div>
+</div></section>
+
+<section class="myths" id="mitos"><div class="wrap">
+<div class="eyebrow" style="color:#bfe0f2">Mitos e verdades</div>
+<h2>O que quase ninguém te conta antes de contratar</h2>
+<div class="myth-list">
+<div class="myth"><b>“Seguro é gasto.”</b><p>É a troca de uma parcela previsível por uma proteção que sustenta a família num momento em que ninguém está preparado. Gasto é o que não volta e não protege nada.</p></div>
+<div class="myth"><b>“Seguro de vida é só para quem tem filhos.”</b><p>Quem divide contas, tem dívidas ou cuida dos pais também depende da sua renda. A pergunta certa é: quem sentiria a sua falta no bolso?</p></div>
+<div class="myth"><b>“Previdência privada é tudo igual.”</b><p>VGBL e PGBL tratam o imposto de forma diferente e servem a perfis diferentes. Escolher errado custa caro lá na frente.</p></div>
+</div></div></section>
+
+<section id="vida"><div class="wrap split">
+<div><div class="eyebrow">Seguro de vida</div><h2>Proteção que cabe na sua realidade</h2></div>
+<div><p>O valor da cobertura deve acompanhar o que a sua família precisaria para manter o padrão de vida, quitar dívidas e seguir com os planos. Fazemos essa conta com você, sem empurrar cobertura que você não precisa.</p>
+<ul class="tick"><li>Quem realmente precisa e quando o seguro vale a pena</li><li>Coberturas explicadas uma a uma, com exemplos</li><li>Comparação entre seguradoras, não só a primeira opção</li><li>Acompanhamento e ajuda na hora de acionar o seguro</li></ul></div>
+</div></section>
+
+<section class="alt" id="prev"><div class="wrap">
+<div class="eyebrow">Previdência privada</div><h2>VGBL ou PGBL? A diferença que muda o seu imposto</h2>
+<div class="tw"><table><thead><tr><th></th><th>PGBL</th><th>VGBL</th></tr></thead><tbody>
+<tr><td>Para quem</td><td>Quem faz declaração completa do IR</td><td>Quem faz declaração simplificada ou já usou o limite</td></tr>
+<tr><td>Benefício fiscal</td><td>Dedução de até 12% da renda bruta anual</td><td>Sem dedução na declaração</td></tr>
+<tr><td>Imposto no resgate</td><td>Sobre o valor total</td><td>Apenas sobre o rendimento</td></tr>
+<tr><td>Tabela de IR</td><td>Regressiva ou progressiva</td><td>Regressiva ou progressiva</td></tr></tbody></table></div>
+<p style="color:var(--mut);font-size:.9rem;margin-top:14px">Informações gerais, não substituem uma análise do seu caso. Consulte as regras vigentes antes de decidir.</p>
+</div></section>
+
+<section><div class="wrap"><div class="eyebrow">Como funciona</div><h2>Do primeiro contato à proteção ativa</h2>
+<div class="steps">
+<div class="step"><b>1. Conversa sem compromisso</b>Você conta sua situação e a gente escuta: família, renda, objetivos.</div>
+<div class="step"><b>2. Análise e comparação</b>Montamos opções com valores e coberturas lado a lado, em linguagem simples.</div>
+<div class="step"><b>3. Contratação acompanhada</b>Cuidamos da papelada e de cada detalhe da proposta.</div>
+<div class="step"><b>4. Acompanhamento contínuo</b>Revisamos o seu plano quando a vida muda. Atendimento personalizado de verdade.</div>
+</div></div></section>
+
+<section class="alt" id="sobre"><div class="wrap about">
+<div class="photo" role="img" aria-label="Espaço reservado para foto"><small>Foto da Takeda</small></div>
+<div><div class="eyebrow">Sobre</div><h2>Uma corretora que explica antes de vender</h2>
+<p style="margin-top:18px">A Takeda Corretora nasceu da convicção de que seguro e previdência não precisam ser confusos. Trabalhamos com responsabilidade e visão de longo prazo, e a sua decisão é sempre mais importante que a venda.</p>
+<p><b>Registro SUSEP:</b> [preencher] · <b>Cidade:</b> [preencher]</p></div>
+</div></section>
+
+<section id="faq"><div class="wrap" style="max-width:820px"><div class="eyebrow">Dúvidas frequentes</div><h2 style="margin-bottom:24px">Perguntas que todo mundo faz</h2>
+<details><summary>Quanto custa um seguro de vida?</summary><p>Depende da idade, do valor da cobertura e das garantias escolhidas. Por isso fazemos uma cotação personalizada, sem valor “padrão”.</p></details>
+<details><summary>Posso resgatar o dinheiro da previdência quando quiser?</summary><p>Em geral sim, respeitando o prazo de carência do plano. Há impacto no imposto conforme o tempo de aplicação e a tabela escolhida.</p></details>
+<details><summary>Qual a diferença entre previdência e poupança?</summary><p>A previdência tem regras fiscais próprias e foco em longo prazo, e pode incluir proteção. Já a poupança é uma reserva simples, de liquidez imediata.</p></details>
+<details><summary>Preciso pagar para a cotação?</summary><p>Não. A conversa e a cotação não têm custo nem compromisso.</p></details>
+</div></section>
+
+<section class="alt" id="contato"><div class="wrap contact">
+<div><div class="eyebrow">Contato</div><h2>Vamos conversar sobre o seu futuro?</h2>
+<p style="margin-top:18px">Preencha o formulário e a Takeda retorna pelo WhatsApp. Se preferir, chame direto.</p>
+<p><a class="btn ghost" href="#" data-wa>Abrir WhatsApp</a></p>
+<p style="color:var(--mut)">Instagram: @takedacorretora_</p></div>
+<form id="lf" novalidate>
+<label>Nome<input name="nome" required autocomplete="name"></label>
+<label>WhatsApp<input name="whatsapp" type="tel" required autocomplete="tel" placeholder="(11) 90000-0000"></label>
+<label>E-mail<input name="email" type="email" autocomplete="email"></label>
+<label>Interesse<select name="interesse"><option>Seguro de vida</option><option>Previdência privada</option><option>Ainda não sei</option></select></label>
+<label>Mensagem<textarea name="mensagem" rows="3"></textarea></label>
+<label class="chk"><input type="checkbox" name="lgpd" required><span>Concordo que a Takeda use meus dados para entrar em contato, conforme a LGPD.</span></label>
+<input name="site" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+<button class="btn" type="submit">Enviar</button><div class="ok" id="ok" role="status">Recebi seus dados. A Takeda vai te chamar em breve.</div>
+</form></div></section>
+</main>
+
+<footer><div class="wrap fg"><div><a class="logo" href="#top">Takeda <span>Corretora</span></a><p>Seguro de vida e previdência privada com atendimento personalizado.</p></div>
+<div><p>SUSEP: [preencher]</p><p>@takedacorretora_</p><p><a href="#admin" id="al" style="opacity:.5">Área restrita</a></p></div></div></footer>
+
+<div id="cb"><button id="cbtn" aria-label="Abrir conversa">Fale com a Takeda</button></div>
+<div id="cw" role="dialog" aria-label="Conversa com a Takeda"><div class="ch"><span>Fale com a Takeda</span><button id="cx" aria-label="Fechar">×</button></div>
+<div id="cm" aria-live="polite"></div><div id="co"></div>
+<form id="cf" novalidate><input id="ci" placeholder="Digite aqui..." aria-label="Mensagem" autocomplete="off"><button class="btn" style="padding:0 18px" type="submit">Enviar</button></form></div>
+
+<div id="adm"><div class="ad">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap"><h2>Área administrativa</h2><button class="btn ghost" id="ax">Sair</button></div>
+<div id="alg" style="margin-top:26px;max-width:340px"><label>Senha<input id="ap" type="password" autocomplete="off"></label><p><button class="btn" id="ab">Entrar</button> <span id="ae" style="color:#b3261e"></span></p></div>
+<div id="ad2" style="display:none;margin-top:26px"><p id="ac" style="font-weight:700;color:var(--ink)"></p>
+<div class="tw"><table><thead><tr><th>Data</th><th>Nome</th><th>WhatsApp</th><th>Interesse</th><th>Origem</th><th>Status</th><th></th></tr></thead><tbody id="at"></tbody></table></div>
+<p style="color:var(--mut);font-size:.88rem;margin-top:14px">Versão de demonstração: os leads ficam salvos apenas neste navegador. Para receber os contatos de todos os visitantes, conecte o endpoint em <code>CONFIG.endpoint</code>.</p></div>
+</div></div>
+
+<script>
+/* ===== CONFIGURAÇÃO / PONTOS DE INTEGRAÇÃO ===== */
+var CONFIG={
+  whatsapp:'5511999999999',        // TROCAR: DDI+DDD+número
+  endpoint:'',                     // FUTURO: URL do seu backend (POST JSON) para receber os leads
+  adminPassword:'takeda2026',      // DEMO: mover para o servidor quando houver backend
+  chatAI:null                      // FUTURO: async function(texto, historico) -> string (IA/API de atendimento)
+};
+var LS='takeda_leads';
+function load(){try{return JSON.parse(localStorage.getItem(LS)||'[]')}catch(e){return[]}}
+function save(a){try{localStorage.setItem(LS,JSON.stringify(a))}catch(e){}}
+function saveLead(l){
+  l.id=Date.now();l.data=new Date().toLocaleString('pt-BR');l.status='novo';
+  var a=load();a.unshift(l);save(a);
+  if(CONFIG.endpoint){try{fetch(CONFIG.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(l)}).catch(function(){})}catch(e){}}
+}
+var $=function(s){return document.querySelector(s)};
+document.querySelectorAll('[data-wa]').forEach(function(a){a.href='https://wa.me/'+CONFIG.whatsapp;a.target='_blank';a.rel='noopener'});
+$('#mb').onclick=function(){var u=$('#ml');var s=u.classList.toggle('show');this.setAttribute('aria-expanded',s)};
+document.querySelectorAll('#ml a').forEach(function(a){a.onclick=function(){$('#ml').classList.remove('show')}});
+
+/* Formulário */
+$('#lf').onsubmit=function(e){e.preventDefault();var f=this;
+  if(f.site.value)return;
+  if(!f.nome.value.trim()||f.whatsapp.value.replace(/\D/g,'').length<10||!f.lgpd.checked){alert('Preencha nome, WhatsApp e aceite o consentimento.');return}
+  saveLead({nome:f.nome.value.trim(),whatsapp:f.whatsapp.value,email:f.email.value,interesse:f.interesse.value,mensagem:f.mensagem.value,origem:'formulário'});
+  f.reset();$('#ok').style.display='block'};
+
+/* Chatbot guiado */
+var cw=$('#cw'),cm=$('#cm'),co=$('#co'),ci=$('#ci'),hist=[],lead={origem:'chatbot'},step='start',started=false;
+function say(t,u){var d=document.createElement('div');d.className='m '+(u?'u':'b');d.textContent=t;cm.appendChild(d);cm.scrollTop=cm.scrollHeight;hist.push({role:u?'user':'bot',text:t})}
+function opts(a){co.innerHTML='';a.forEach(function(t){var b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=function(){handle(t)};co.appendChild(b)})}
+function ask(){
+  if(step==='start'){say('Olá! Eu sou da equipe da Takeda. Como posso ajudar?');opts(['Seguro de vida','Previdência privada','Tirar uma dúvida']);step='interesse'}
+}
+function handle(t){
+  say(t,true);co.innerHTML='';
+  if(step==='interesse'){lead.interesse=t;say('Boa escolha. Para indicar o melhor caminho, qual a sua faixa de idade?');opts(['Até 30','31 a 45','46 a 60','Mais de 60']);step='idade'}
+  else if(step==='idade'){lead.idade=t;say('Você tem dependentes financeiros (filhos, pais, cônjuge)?');opts(['Sim','Não']);step='dep'}
+  else if(step==='dep'){lead.dependentes=t;say('Qual o seu nome?');step='nome'}
+  else if(step==='nome'){lead.nome=t;say('Prazer, '+t+'! Qual o seu WhatsApp com DDD?');step='fone'}
+  else if(step==='fone'){
+    if(t.replace(/\D/g,'').length<10){say('Não consegui entender o número. Pode enviar com DDD?');return}
+    lead.whatsapp=t;say('Posso usar seus dados só para a Takeda entrar em contato (LGPD)?');opts(['Sim, pode','Prefiro não']);step='lgpd'}
+  else if(step==='lgpd'){
+    if(t.indexOf('Sim')===0){lead.mensagem='Idade: '+lead.idade+' · Dependentes: '+lead.dependentes;lead.historico=hist.slice();saveLead(lead);say('Recebi seus dados. A Takeda vai te chamar em breve!');opts(['Falar agora no WhatsApp'])}
+    else say('Tudo bem, não vou guardar nada. Você pode chamar direto no WhatsApp quando quiser.');
+    step='fim'}
+  else if(step==='fim'){if(t.indexOf('WhatsApp')>-1)window.open('https://wa.me/'+CONFIG.whatsapp,'_blank');
+    else if(CONFIG.chatAI){CONFIG.chatAI(t,hist).then(function(r){say(r)})}
+    else say('Para continuar, fale com a Takeda no WhatsApp ou use o formulário do site.')}
+}
+$('#cbtn').onclick=function(){cw.classList.add('open');$('#cb').style.display='none';if(!started){started=true;ask()}ci.focus()};
+$('#cx').onclick=function(){cw.classList.remove('open');$('#cb').style.display='block'};
+$('#cf').onsubmit=function(e){e.preventDefault();var v=ci.value.trim();if(!v)return;ci.value='';
+  if(step==='interesse'||step==='idade'||step==='dep'){say(v,true);if(CONFIG.chatAI){CONFIG.chatAI(v,hist).then(function(r){say(r)})}else say('Use os botões acima para eu entender melhor, ou fale direto no WhatsApp.');return}
+  handle(v)};
+
+/* Admin (#admin) */
+var adm=$('#adm'),okAdm=false;
+function render(){
+  var a=load();$('#ac').textContent=a.length+' lead(s) neste navegador · '+a.filter(function(x){return x.status==='novo'}).length+' novo(s)';
+  var tb=$('#at');tb.innerHTML='';
+  a.forEach(function(l){var tr=document.createElement('tr');
+    [l.data,l.nome,l.whatsapp,l.interesse||'-',l.origem].forEach(function(v){var td=document.createElement('td');td.textContent=v;tr.appendChild(td)});
+    var td=document.createElement('td'),s=document.createElement('select');
+    ['novo','em contato','proposta enviada','fechado','perdido'].forEach(function(o){var op=document.createElement('option');op.textContent=o;if(o===l.status)op.selected=true;s.appendChild(op)});
+    s.onchange=function(){var all=load();all.forEach(function(x){if(x.id===l.id)x.status=s.value});save(all);render()};td.appendChild(s);tr.appendChild(td);
+    var t2=document.createElement('td'),w=document.createElement('a');w.textContent='WhatsApp';w.href='https://wa.me/55'+String(l.whatsapp).replace(/\D/g,'').replace(/^55/,'');w.target='_blank';w.rel='noopener';t2.appendChild(w);
+    var d=document.createElement('button');d.textContent=' ✕';d.title='Excluir';d.style.cssText='background:none;border:0;cursor:pointer;color:var(--mut)';d.onclick=function(){if(confirm('Excluir este lead?')){save(load().filter(function(x){return x.id!==l.id}));render()}};t2.appendChild(d);tr.appendChild(t2);tb.appendChild(tr)});
+}
+function route(){if(location.hash==='#admin'){adm.classList.add('on');if(okAdm){$('#alg').style.display='none';$('#ad2').style.display='block';render()}}else adm.classList.remove('on')}
+$('#ab').onclick=function(){if($('#ap').value===CONFIG.adminPassword){okAdm=true;$('#ap').value='';$('#ae').textContent='';route()}else $('#ae').textContent='Senha incorreta.'};
+$('#ap').onkeydown=function(e){if(e.key==='Enter')$('#ab').click()};
+$('#ax').onclick=function(){okAdm=false;$('#alg').style.display='block';$('#ad2').style.display='none';location.hash='';};
+window.addEventListener('hashchange',route);route();
+</script>
+</body>
+</html>
