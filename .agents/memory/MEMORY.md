@@ -1,1 +1,1 @@
-- [Takeda Corretora branding](takeda-branding.md) — Use only verified brokerage brand assets; the supplied portrait is not the official logo.
+- [Takeda Corretora branding](takeda-branding.md) — Preserve the established palette and use only verified brokerage assets; supplied portrait is not the logo.
