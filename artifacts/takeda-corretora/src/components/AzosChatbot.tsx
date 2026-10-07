@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import {
+  Activity,
   ArrowRight,
   ArrowUpRight,
   CheckCircle2,
@@ -46,10 +47,9 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
   // Input states
   const [textInput, setTextInput] = useState('');
   const [dateInput, setDateInput] = useState('');
-  const [sliderCapital, setSliderCapital] = useState(500000);
+  const [sliderCapital, setSliderCapital] = useState(1000000);
   const [phoneInput, setPhoneInput] = useState('');
   const [emailInput, setEmailInput] = useState('');
-  const [nameCollected, setNameCollected] = useState('');
 
   const [showFallbackOption, setShowFallbackOption] = useState(false);
 
@@ -148,17 +148,13 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
       time: getTimeString(),
     };
     setMessages((prev) => [...prev, userMsg]);
-    setIsTyping(true);
 
-    // Save name if at name step
-    if (currentStep.stepId === 'name') {
-      setNameCollected(String(answerValue));
-      saveLeadLocally({
-        name: String(answerValue),
-        phone: '',
-        provider: 'azos',
-      });
-    }
+    // Reset inputs
+    setTextInput('');
+    setDateInput('');
+
+    // Trigger typing state
+    setIsTyping(true);
 
     try {
       const nextStep = await answerSimulation({
@@ -167,16 +163,12 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
         answer: answerValue,
       });
 
-      // Clear current inputs
-      setTextInput('');
-      setDateInput('');
+      setCurrentStep(nextStep);
 
       setTimeout(() => {
         setIsTyping(false);
-        setCurrentStep(nextStep);
-
         const botMsg: Message = {
-          id: 'bot-' + Date.now(),
+          id: 'msg-' + Date.now(),
           sender: 'bot',
           text: nextStep.question,
           contextExplanation: nextStep.contextExplanation,
@@ -185,7 +177,7 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
           resultData: nextStep.result,
         };
         setMessages((prev) => [...prev, botMsg]);
-      }, 850);
+      }, 750);
     } catch {
       setIsTyping(false);
       setShowFallbackOption(true);
@@ -206,7 +198,6 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
               alt="Consultor Takeda"
               className="azos-avatar-img"
               onError={(e) => {
-                // Graceful fallback to icon if image fails
                 (e.target as HTMLElement).style.display = 'none';
               }}
             />
@@ -218,22 +209,21 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
               <h3>Consultor Takeda</h3>
               <div className="azos-chatbot-partner-pill">
                 <AzosLogo height={13} color="#005700" />
+                <span>Motor Atuarial</span>
               </div>
             </div>
-            <p className="azos-header-subtitle">
-              Simulação atuarial oficial Azos com contratação no WhatsApp
-            </p>
+            <p className="azos-header-sub">Simulação de Precisão com Tábua Biométrica</p>
           </div>
         </div>
 
-        <div className="azos-header-actions">
+        <div className="azos-chatbot-actions">
           <button
             type="button"
             className="azos-icon-btn"
-            title="Reiniciar Simulação"
+            title="Reiniciar Cotação"
             onClick={initChat}
           >
-            <RefreshCw size={15} />
+            <RefreshCw size={14} />
           </button>
           {onClose && (
             <button
@@ -282,30 +272,61 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
                 </div>
               )}
 
-              {/* Proposal Results Card */}
+              {/* Proposal Results Card: 4 Structured Blocks */}
               {msg.isResult && msg.resultData && (
                 <div className="azos-results-card">
+                  {/* BLOCO 1: Resumo do Perfil Identificado */}
                   <div className="azos-results-header">
-                    <div>
-                      <span className="azos-results-kicker">PROPOSTAS OFICIAIS AZOS</span>
-                      <h4>Opções calculadas para {msg.resultData.clientName}</h4>
-                      <small>Idade: {msg.resultData.age} anos · Capital: {formatBRL(msg.resultData.capital)}</small>
+                    <div className="azos-scenario-badge-row">
+                      <span className={`azos-scenario-pill scenario-${msg.resultData.scenario.id}`}>
+                        {msg.resultData.scenario.badge}
+                      </span>
+                      <span className="azos-scenario-tone">{msg.resultData.scenario.tone}</span>
+                    </div>
+
+                    <h4>Opções Calculadas para {msg.resultData.clientName}</h4>
+
+                    <div className="azos-profile-chips-grid">
+                      <div className="profile-chip-item">
+                        <User size={13} />
+                        <span>{msg.resultData.profileSummary.ageGenderText}</span>
+                      </div>
+                      <div className="profile-chip-item">
+                        <Shield size={13} />
+                        <span>Capital: <strong>{msg.resultData.profileSummary.capitalFormatted}</strong></span>
+                      </div>
+                      <div className="profile-chip-item factors-chip">
+                        <Activity size={13} />
+                        <span>{msg.resultData.profileSummary.factorsList.join(' · ')}</span>
+                      </div>
                     </div>
                   </div>
 
+                  {/* BLOCO 2: Tabela com as 3 Opções de Planos (Essencial, Recomendado, Completo) */}
                   <div className="azos-plans-grid">
                     {msg.resultData.plans.map((plan) => (
                       <div
                         key={plan.id}
-                        className={`azos-plan-card ${plan.id === 'recomendado' ? 'is-featured' : ''}`}
+                        className={`azos-plan-card ${plan.id === 'recomendado' ? 'is-featured' : ''} ${
+                          plan.isSpecialUnderwriting ? 'is-special' : ''
+                        }`}
                       >
                         {plan.badge && <span className="azos-plan-badge">{plan.badge}</span>}
                         <h5 className="azos-plan-title">{plan.title}</h5>
 
-                        <div className="azos-plan-price">
-                          <span className="price-prefix">R$</span>
-                          <strong className="price-value">{plan.monthlyPrice}</strong>
-                          <span className="price-period">/mês</span>
+                        <div className="azos-plan-price-wrapper">
+                          {plan.isSpecialUnderwriting ? (
+                            <div className="azos-special-price-box">
+                              <span className="special-price-tag">Sob Consulta Técnica</span>
+                              <small className="special-price-ref">Ref: R$ {plan.minPrice} – {plan.maxPrice}/mês</small>
+                            </div>
+                          ) : (
+                            <div className="azos-plan-price">
+                              <span className="price-prefix">R$</span>
+                              <strong className="price-value">{plan.minPrice} – {plan.maxPrice}</strong>
+                              <span className="price-period">/mês</span>
+                            </div>
+                          )}
                         </div>
 
                         <ul className="azos-plan-coverages">
@@ -325,7 +346,7 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
                             rel="noopener noreferrer"
                             className="button button-azos-contract"
                           >
-                            <span>Contratar via WhatsApp</span>
+                            <span>{plan.isSpecialUnderwriting ? 'Validar com Corretor' : 'Contratar via WhatsApp'}</span>
                             <ArrowUpRight size={14} />
                           </a>
                         </div>
@@ -333,12 +354,31 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
                     ))}
                   </div>
 
+                  {/* BLOCO 3: Nota de Transparência do Cenário */}
+                  <div className={`azos-transparency-card scenario-${msg.resultData.scenario.id}`}>
+                    <div className="transparency-icon-box">
+                      <ShieldCheck size={18} />
+                    </div>
+                    <div className="transparency-content">
+                      <span className="transparency-title">
+                        Nota de Transparência ({msg.resultData.scenario.title}):
+                      </span>
+                      <p className="transparency-text">"{msg.resultData.scenario.transparencyNote}"</p>
+                      {msg.resultData.scenario.technicalNotice && (
+                        <p className="transparency-notice">
+                          ⚠️ {msg.resultData.scenario.technicalNotice}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* BLOCO 4: Chamada para Ação (CTA) para Agendamento da Conversa Técnica */}
                   <div className="azos-results-footer-cta">
                     <div className="azos-results-human-note">
                       <MessageSquare size={16} />
                       <div>
-                        <strong>Dúvidas sobre coberturas ou quer personalizar valores?</strong>
-                        <p>Nosso consultor humano está disponível no WhatsApp para te ajudar a escolher.</p>
+                        <strong>Agendamento de Conversa Técnica</strong>
+                        <p>Valide suas taxas, coberturas e condições com o corretor da Takeda no WhatsApp.</p>
                       </div>
                     </div>
                     <a
@@ -347,7 +387,7 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
                       rel="noopener noreferrer"
                       className="button button-whatsapp-lead"
                     >
-                      <span>Falar com Corretor Takeda no WhatsApp</span>
+                      <span>Agendar Conversa Técnica no WhatsApp</span>
                       <ArrowUpRight size={16} />
                     </a>
                   </div>
@@ -384,12 +424,12 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
           <div className="azos-fallback-card">
             <Zap size={20} className="fallback-icon" />
             <div>
-              <strong>Parece que a seguradora demorou para responder.</strong>
-              <p>Quer que nosso corretor finalize a cotação com as mesmas condições pelo WhatsApp?</p>
+              <strong>Parece que o serviço demorou para responder.</strong>
+              <p>Quer que nosso consultor conclua a simulação com as mesmas condições pelo WhatsApp?</p>
             </div>
             <a
               href={`https://wa.me/5511999999999?text=${encodeURIComponent(
-                `Olá! Estava simulando no site da Takeda (Azos) e gostaria que um consultor finalizasse minha cotação personalizada.`
+                `Olá! Estava simulando no site da Takeda e gostaria que um consultor concluísse minha cotação personalizada.`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -467,7 +507,7 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
             </form>
           )}
 
-          {/* STEP: CHOICE (GENDER, SMOKER, OBJECTIVE) */}
+          {/* STEP: CHOICE (GENDER, SMOKER, SPORTS, HEALTH) */}
           {currentStep.inputType === 'choice' && currentStep.options && (
             <div className="azos-choices-group">
               {currentStep.options.map((opt) => (
@@ -487,7 +527,7 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
           {/* STEP: PROFESSION */}
           {currentStep.inputType === 'profession' && currentStep.options && (
             <div className="azos-profession-group">
-              <span className="control-label">Selecione sua ocupação:</span>
+              <span className="control-label">Selecione sua ocupação profissional:</span>
               <div className="profession-chips-grid">
                 {currentStep.options.map((opt) => (
                   <button
@@ -523,7 +563,7 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
               />
 
               <div className="slider-quick-chips">
-                {[200000, 350000, 500000, 1000000, 2000000].map((val) => (
+                {[200000, 500000, 1000000, 2000000, 3000000].map((val) => (
                   <button
                     key={val}
                     type="button"
@@ -574,7 +614,7 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
                 <input
                   type="email"
                   className="azos-text-input"
-                  placeholder="Seu melhor e-mail (opcional)"
+                  placeholder="Seu melhor e-mail (Ex: seu@email.com)"
                   value={emailInput}
                   onChange={(e) => setEmailInput(e.target.value)}
                   required
@@ -586,7 +626,7 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
                 className="button button-dark contact-submit-btn"
                 disabled={phoneInput.length < 14 || !emailInput.includes('@') || isTyping}
               >
-                <span>Ver Minha Cotação Oficial Azos</span>
+                <span>Gerar Proposta com Motor Atuarial</span>
                 <Sparkles size={16} />
               </button>
             </form>
@@ -596,7 +636,7 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
 
       {/* Chatbot Footer Micro Note */}
       <div className="azos-chatbot-footbar">
-        <span>🔒 Criptografia SSL 256 bits · Sem spam · Seus dados protegidos</span>
+        <span>🔒 Criptografia SSL 256 bits · Respaldo SUSEP · Proteção de Dados LGPD</span>
         <a
           href="https://www.azos.com.br"
           target="_blank"

@@ -2455,28 +2455,92 @@ button { font: inherit; }
 }
 
 .azos-results-header {
-  margin-bottom: 14px;
-  padding-bottom: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
   border-bottom: 1px solid #e2e8f0;
 }
 
-.azos-results-kicker {
-  font-size: 9.5px;
+.azos-scenario-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.azos-scenario-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.1em;
-  color: #005700;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.azos-scenario-pill.scenario-1 {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.azos-scenario-pill.scenario-2 {
+  background: #fefce8;
+  color: #854d0e;
+  border: 1px solid #fde047;
+}
+
+.azos-scenario-pill.scenario-3 {
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fdba74;
+}
+
+.azos-scenario-pill.scenario-4 {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.azos-scenario-tone {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
 }
 
 .azos-results-header h4 {
-  margin: 4px 0 2px;
-  font: 700 17px var(--sans);
+  margin: 0 0 10px;
+  font: 700 18px var(--sans);
   color: #0f172a;
 }
 
-.azos-results-header small {
-  color: #64748b;
-  font-size: 11.5px;
+.azos-profile-chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profile-chip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: #334155;
+}
+
+.profile-chip-item strong {
+  color: #0f172a;
+}
+
+.profile-chip-item.factors-chip {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #475569;
 }
 
 .azos-plans-grid {
@@ -2485,41 +2549,62 @@ button { font: inherit; }
   gap: 12px;
 }
 
+@media (max-width: 860px) {
+  .azos-plans-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .azos-plan-card {
   position: relative;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 16px 12px 12px;
+  border-radius: 12px;
+  padding: 16px 12px 14px;
   display: flex;
   flex-direction: column;
+  transition: all 0.2s ease;
 }
 
 .azos-plan-card.is-featured {
   border: 2px solid #005700;
   background: #ffffff;
-  box-shadow: 0 6px 20px rgba(0, 87, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 87, 0, 0.12);
+}
+
+.azos-plan-card.is-special {
+  border: 1.5px dashed #f59e0b;
+  background: #fffdfa;
 }
 
 .azos-plan-badge {
   position: absolute;
-  top: -9px;
+  top: -10px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 2px 8px;
+  padding: 3px 10px;
   background: #005700;
   color: #ffffff;
-  font-size: 9px;
-  font-weight: 700;
+  font-size: 9.5px;
+  font-weight: 800;
   border-radius: 9999px;
   white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
 .azos-plan-title {
-  margin: 4px 0 8px;
-  font: 700 13px var(--sans);
+  margin: 6px 0 10px;
+  font: 700 13.5px var(--sans);
   color: #0f172a;
   text-align: center;
+}
+
+.azos-plan-price-wrapper {
+  margin-bottom: 12px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .azos-plan-price {
@@ -2527,13 +2612,37 @@ button { font: inherit; }
   align-items: baseline;
   justify-content: center;
   gap: 3px;
-  margin-bottom: 12px;
   color: #0f172a;
 }
 
-.price-prefix { font-size: 12px; font-weight: 600; }
-.price-value { font: 800 22px var(--sans); color: #005700; }
+.price-prefix { font-size: 12px; font-weight: 600; color: #005700; }
+.price-value { font: 800 18px var(--sans); color: #005700; }
 .price-period { font-size: 11px; color: #64748b; }
+
+.azos-special-price-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.special-price-tag {
+  display: inline-block;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.special-price-ref {
+  display: block;
+  font-size: 10px;
+  color: #78350f;
+  margin-top: 2px;
+}
 
 .azos-plan-coverages {
   list-style: none;
@@ -2597,6 +2706,71 @@ button { font: inherit; }
 .button-azos-contract:hover {
   background: #004500;
   transform: translateY(-1px);
+}
+
+/* 3. Nota de Transparência */
+.azos-transparency-card {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.azos-transparency-card.scenario-1 {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+.azos-transparency-card.scenario-1 .transparency-icon-box { color: #15803d; }
+
+.azos-transparency-card.scenario-2 {
+  background: #fefce8;
+  border-color: #fef08a;
+}
+.azos-transparency-card.scenario-2 .transparency-icon-box { color: #a16207; }
+
+.azos-transparency-card.scenario-3 {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+.azos-transparency-card.scenario-3 .transparency-icon-box { color: #c2410c; }
+
+.azos-transparency-card.scenario-4 {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+.azos-transparency-card.scenario-4 .transparency-icon-box { color: #b91c1c; }
+
+.transparency-content {
+  flex-grow: 1;
+}
+
+.transparency-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #0f172a;
+  margin-bottom: 3px;
+}
+
+.transparency-text {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #334155;
+  font-style: italic;
+}
+
+.transparency-notice {
+  margin: 6px 0 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #991b1b;
+  line-height: 1.4;
 }
 
 .azos-results-footer-cta {

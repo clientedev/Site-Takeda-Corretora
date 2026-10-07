@@ -16,6 +16,7 @@ export interface LeadPayload {
   birthdate?: string;
   capital?: number;
   objective?: string;
+  scenarioId?: number;
   provider: 'azos';
   createdAt?: string;
 }
@@ -25,6 +26,10 @@ export interface CoveragePlan {
   title: string;
   badge?: string;
   monthlyPrice: number;
+  minPrice: number;
+  maxPrice: number;
+  priceDisplay: string;
+  isSpecialUnderwriting?: boolean;
   capital: number;
   coverages: {
     name: string;
@@ -34,10 +39,31 @@ export interface CoveragePlan {
   contractUrl: string;
 }
 
+export interface ScenarioInfo {
+  id: 1 | 2 | 3 | 4;
+  title: string;
+  badge: string;
+  tone: string;
+  transparencyNote: string;
+  technicalNotice?: string;
+  factorsIdentified: string[];
+  isSpecialUnderwriting: boolean;
+}
+
 export interface SimulationResult {
   clientName: string;
   age: number;
+  gender: 'masculino' | 'feminino';
+  ageGroup: string;
+  ageGenderFactor: number;
+  riskMultiplier: number;
   capital: number;
+  scenario: ScenarioInfo;
+  profileSummary: {
+    ageGenderText: string;
+    capitalFormatted: string;
+    factorsList: string[];
+  };
   plans: CoveragePlan[];
   whatsappMessage: string;
 }
@@ -57,44 +83,142 @@ export interface SimulationStepResponse {
 // In-memory simulation sessions
 const activeSessions = new Map<string, Record<string, unknown>>();
 
-// Helper to calculate realistic Azos actuarial pricing based on Susep mortalidade
-function calculateAzosPlans(data: Record<string, unknown>): SimulationResult {
-  const name = String(data.name || 'Cliente');
-  const birthdate = String(data.birthdate || '1990-01-01');
-  const capital = Number(data.capital || 300000);
-  const isSmoker = data.smoker === 'sim';
+// Motor de Cálculo e Simulação de Seguros de Vida de Precisão (Atuarial Azos / Mercado)
+export function calculateAzosPlans(data: Record<string, unknown>): SimulationResult {
+  const name = String(data.name || 'Cliente').trim();
+  const birthdate = String(data.birthdate || '1995-01-01');
+  const capital = Number(data.capital || 1000000);
   const gender = data.gender === 'feminino' ? 'feminino' : 'masculino';
 
-  // Calculate age
-  let age = 35;
+  // 1. IDADE E GÊNERO BIOLÓGICO
+  let age = 30;
   const parts = birthdate.includes('/') ? birthdate.split('/') : birthdate.split('-');
   if (parts.length === 3) {
     const year = Number(parts[2].length === 4 ? parts[2] : parts[0]);
-    if (year > 1900 && year < 2020) {
-      age = Math.max(18, Math.min(70, new Date().getFullYear() - year));
+    if (year > 1920 && year < 2025) {
+      age = Math.max(18, Math.min(75, new Date().getFullYear() - year));
     }
   }
 
-  // Base actuarial rate per R$ 100k of capital
-  let baseRate = 0.00018 * (1 + (age - 25) * 0.045);
-  if (gender === 'feminino') baseRate *= 0.82; // Women have longer life expectancy
-  if (isSmoker) baseRate *= 1.45; // Smoker surcharge
+  let ageGenderFactor = 1.0;
+  let ageGroup = 'Faixa 1 (18–29 anos)';
 
-  const basePrice = Math.max(29.9, Math.round((capital * baseRate) / 12));
-  const recommendedPrice = Math.round(basePrice * 1.55);
-  const totalCarePrice = Math.round(basePrice * 2.15);
+  if (age < 30) {
+    ageGroup = 'Faixa 1 (18–29 anos)';
+    ageGenderFactor = gender === 'feminino' ? 0.7 : 1.0;
+  } else if (age < 40) {
+    ageGroup = 'Faixa 2 (30–39 anos)';
+    ageGenderFactor = gender === 'feminino' ? 0.85 : 1.25;
+  } else if (age < 50) {
+    ageGroup = 'Faixa 3 (40–49 anos)';
+    ageGenderFactor = gender === 'feminino' ? 1.2 : 1.8;
+  } else if (age < 60) {
+    ageGroup = 'Faixa 4 (50–59 anos)';
+    ageGenderFactor = gender === 'feminino' ? 1.9 : 2.8;
+  } else {
+    ageGroup = 'Faixa 5 (60+ anos)';
+    ageGenderFactor = gender === 'feminino' ? 2.8 : 4.2;
+  }
+
+  // 2. FATORES DE RISCO DIVERSOS
+  const isSmoker = data.smoker === 'sim';
+  const isRiskProfession = data.profession === 'operacional_risco';
+  const isRiskSports = data.sports === 'sim';
+  const hasMedicalHistory = data.health === 'sim';
+
+  let riskMultiplier = 1.0;
+  const factorsIdentified: string[] = [];
+
+  if (isSmoker) {
+    riskMultiplier *= 1.6;
+    factorsIdentified.push('F1 (Fumante / Tabagismo ativo)');
+  }
+  if (isRiskProfession) {
+    riskMultiplier *= 1.3;
+    factorsIdentified.push('F2 (Profissão de Risco Operacional)');
+  }
+  if (isRiskSports) {
+    riskMultiplier *= 1.25;
+    factorsIdentified.push('F3 (Desportos / Atividades de Risco)');
+  }
+  if (hasMedicalHistory) {
+    factorsIdentified.push('F4 (Condições Clínicas / DPS Especial)');
+  }
+
+  // 3. MATRIZ DE CENÁRIOS
+  let scenarioId: 1 | 2 | 3 | 4 = 1;
+  let scenarioTitle = 'Cenário 1: Perfil Padrão';
+  let scenarioBadge = 'Perfil Padrão';
+  let tone = 'Apresentação Padrão e Rápida Validação';
+  let transparencyNote = 'Estimativa padrão calculada com base na tabela prévia do mercado.';
+  let technicalNotice: string | undefined = undefined;
+  let isSpecialUnderwriting = false;
+
+  if (hasMedicalHistory) {
+    scenarioId = 4;
+    scenarioTitle = 'Cenário 4: Perfil Crítico / Análise Especial';
+    scenarioBadge = 'Análise Técnica Prioritária';
+    tone = 'Necessidade de Consultoria Técnica Prioritária';
+    transparencyNote =
+      'O seu perfil requer validação técnica direta da subscrição para garantir proteção jurídica total.';
+    technicalNotice =
+      'Devido ao histórico informado, o seu plano passará por uma análise técnica personalizada sem custos adicionais para garantir que a cobertura não seja recusada no futuro.';
+    isSpecialUnderwriting = true;
+  } else if (factorsIdentified.length >= 2) {
+    scenarioId = 3;
+    scenarioTitle = 'Cenário 3: Perfil Agravado Cumulativo';
+    scenarioBadge = 'Risco Cumulativo Agravado';
+    tone = 'Projeção sob Medida para Risco Agravado';
+    transparencyNote =
+      'Projeção considerando múltiplos fatores de risco para evitar surpresas na apólice.';
+  } else if (factorsIdentified.length === 1) {
+    scenarioId = 2;
+    scenarioTitle = 'Cenário 2: Perfil Agravado Moderado';
+    scenarioBadge = 'Risco Agravado Moderado';
+    tone = 'Estimativa Ajustada por Perfil Operacional/Estilo de Vida';
+    const singularRisk = isSmoker
+      ? 'condição de fumante'
+      : isRiskProfession
+      ? 'atividade operacional'
+      : 'prática de desportos de risco';
+    transparencyNote = `Valor ajustado para considerar a ${singularRisk} com cobertura integral.`;
+  }
+
+  // CÁLCULO DE VALOR (Base por cada R$ 1.000.000 de capital)
+  const capitalInMillions = capital / 1000000;
+
+  // Plano Essencial: Morte e Invalidez (R$ 90 a R$ 105 por R$ 1M base)
+  const essencialMin = Math.max(35, Math.round(capitalInMillions * 90 * ageGenderFactor * riskMultiplier));
+  const essencialMax = Math.max(42, Math.round(capitalInMillions * 105 * ageGenderFactor * riskMultiplier));
+
+  // Plano Recomendado: Morte/Invalidez + Doenças Graves + Assistência Funeral (R$ 140 a R$ 170 por R$ 1M base)
+  const recomendadoMin = Math.max(55, Math.round(capitalInMillions * 140 * ageGenderFactor * riskMultiplier));
+  const recomendadoMax = Math.max(68, Math.round(capitalInMillions * 170 * ageGenderFactor * riskMultiplier));
+
+  // Plano Completo: Morte/Invalidez + Doenças Graves Ampliada + DIT Renda Temporária + Telemedicina (R$ 225 a R$ 275 por R$ 1M base)
+  const completoMin = Math.max(89, Math.round(capitalInMillions * 225 * ageGenderFactor * riskMultiplier));
+  const completoMax = Math.max(110, Math.round(capitalInMillions * 275 * ageGenderFactor * riskMultiplier));
 
   const formatBRL = (val: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
 
-  const createWhatsAppPlanUrl = (planName: string, price: number) => {
+  const formatRange = (min: number, max: number) => {
+    if (isSpecialUnderwriting) {
+      return `Sob Consulta (Ref: ${formatBRL(min)} – ${formatBRL(max)}/mês)`;
+    }
+    return `${formatBRL(min)} – ${formatBRL(max)}/mês`;
+  };
+
+  const createWhatsAppPlanUrl = (planName: string, rangeText: string) => {
     const text =
-      `Olá, Takeda Seguros! Realizei a simulação oficial da Azos no site e escolhi o seguinte plano:\n\n` +
+      `Olá, Takeda Seguros! Realizei a simulação oficial no site e escolhi o seguinte plano:\n\n` +
       `• Plano: ${planName}\n` +
-      `• Capital Segurado: ${formatBRL(capital)}\n` +
-      `• Valor Estimado: ${formatBRL(price)}/mês\n` +
-      `• Titular: ${name}\n\n` +
-      `Gostaria de formalizar a contratação e tirar dúvidas com o consultor.`;
+      `• Capital Simulado: ${formatBRL(capital)}\n` +
+      `• Faixa Estimada: ${rangeText}\n` +
+      `• Enquadramento: ${scenarioTitle} (${scenarioBadge})\n` +
+      `• Titular: ${name} (${age} anos, ${gender})\n` +
+      (factorsIdentified.length ? `• Fatores Informados: ${factorsIdentified.join(', ')}\n` : '') +
+      `\nGostaria de agendar a conversa técnica e formalizar a contratação com o consultor.`;
     return `https://wa.me/5511999999999?text=${encodeURIComponent(text)}`;
   };
 
@@ -103,7 +227,11 @@ function calculateAzosPlans(data: Record<string, unknown>): SimulationResult {
       id: 'essencial',
       title: 'Plano Essencial Azos',
       badge: 'Proteção Básica',
-      monthlyPrice: basePrice,
+      monthlyPrice: Math.round((essencialMin + essencialMax) / 2),
+      minPrice: essencialMin,
+      maxPrice: essencialMax,
+      priceDisplay: formatRange(essencialMin, essencialMax),
+      isSpecialUnderwriting,
       capital,
       coverages: [
         { name: 'Morte (Qualquer Causa)', value: formatBRL(capital), highlight: true },
@@ -111,56 +239,95 @@ function calculateAzosPlans(data: Record<string, unknown>): SimulationResult {
         { name: 'Assistência Funeral Familiar', value: 'R$ 7.000 incluído' },
         { name: 'Carência para Acidentes', value: 'Zero dias' },
       ],
-      contractUrl: createWhatsAppPlanUrl('Plano Essencial Azos', basePrice),
+      contractUrl: createWhatsAppPlanUrl('Plano Essencial Azos', formatRange(essencialMin, essencialMax)),
     },
     {
       id: 'recomendado',
       title: 'Plano Recomendado Takeda',
       badge: 'Mais Escolhido ★',
-      monthlyPrice: recommendedPrice,
+      monthlyPrice: Math.round((recomendadoMin + recomendadoMax) / 2),
+      minPrice: recomendadoMin,
+      maxPrice: recomendadoMax,
+      priceDisplay: formatRange(recomendadoMin, recomendadoMax),
+      isSpecialUnderwriting,
       capital,
       coverages: [
         { name: 'Morte (Qualquer Causa)', value: formatBRL(capital), highlight: true },
-        { name: 'Doenças Graves em Vida (Câncer, Infarto, AVC)', value: formatBRL(Math.min(capital, 300000)), highlight: true },
+        {
+          name: 'Doenças Graves em Vida (Câncer, Infarto, AVC)',
+          value: formatBRL(Math.min(capital, 300000)),
+          highlight: true,
+        },
         { name: 'Invalidez Permanente por Acidente (IPA)', value: formatBRL(capital) },
         { name: 'Assistência Funeral Especializada', value: 'R$ 10.000 incluído' },
-        { name: 'Segunda Opinião Médica Internacional', value: 'Incluído sem custo adicional' },
+        { name: 'Segunda Opinião Médica Internacional', value: 'Incluído sem custo' },
       ],
-      contractUrl: createWhatsAppPlanUrl('Plano Recomendado Takeda', recommendedPrice),
+      contractUrl: createWhatsAppPlanUrl('Plano Recomendado Takeda', formatRange(recomendadoMin, recomendadoMax)),
     },
     {
       id: 'total-care',
-      title: 'Plano Total Care 360°',
+      title: 'Plano Completo 360°',
       badge: 'Proteção Máxima',
-      monthlyPrice: totalCarePrice,
+      monthlyPrice: Math.round((completoMin + completoMax) / 2),
+      minPrice: completoMin,
+      maxPrice: completoMax,
+      priceDisplay: formatRange(completoMin, completoMax),
+      isSpecialUnderwriting,
       capital,
       coverages: [
         { name: 'Morte (Qualquer Causa)', value: formatBRL(capital), highlight: true },
-        { name: 'Doenças Graves Ampliada (Até 12 patologias)', value: formatBRL(Math.min(capital, 500000)), highlight: true },
+        {
+          name: 'Doenças Graves Ampliada (Até 12 patologias)',
+          value: formatBRL(Math.min(capital, 500000)),
+          highlight: true,
+        },
         { name: 'Invalidez Total ou Parcial por Acidente', value: formatBRL(capital) },
         { name: 'Renda por Incapacidade Temporária (DIT)', value: 'Até R$ 6.000 / mês' },
-        { name: 'Telemedicina Einstein 24h para família', value: 'Incluído' },
+        { name: 'Telemedicina Einstein 24h Família', value: 'Incluído 24h' },
       ],
-      contractUrl: createWhatsAppPlanUrl('Plano Total Care 360°', totalCarePrice),
+      contractUrl: createWhatsAppPlanUrl('Plano Completo 360°', formatRange(completoMin, completoMax)),
     },
   ];
 
-  const waMsg = encodeURIComponent(
-    `Olá, Takeda Seguros! Acabei de simular meu seguro Azos no site para um capital de ${formatBRL(capital)} (Plano Recomendado a partir de ${formatBRL(recommendedPrice)}/mês). Meu nome é ${name}. Gostaria de tirar dúvidas com o consultor.`
-  );
+  const waMainText =
+    `Olá, Takeda Corretora! Acabei de realizar a simulação com cálculo atuarial no site.\n\n` +
+    `• Titular: ${name} (${age} anos, ${gender})\n` +
+    `• Capital Desejado: ${formatBRL(capital)}\n` +
+    `• Enquadramento: ${scenarioTitle}\n` +
+    (factorsIdentified.length ? `• Fatores de Risco: ${factorsIdentified.join(', ')}\n` : '') +
+    `• Faixa Recomendada: ${formatRange(recomendadoMin, recomendadoMax)}\n\n` +
+    `Gostaria de agendar a conversa técnica com o consultor para validar minha proposta.`;
 
   return {
     clientName: name,
     age,
+    gender,
+    ageGroup,
+    ageGenderFactor,
+    riskMultiplier: Number(riskMultiplier.toFixed(2)),
     capital,
+    scenario: {
+      id: scenarioId,
+      title: scenarioTitle,
+      badge: scenarioBadge,
+      tone,
+      transparencyNote,
+      technicalNotice,
+      factorsIdentified: factorsIdentified.length ? factorsIdentified : ['Perfil sem agravamentos (Padrão)'],
+      isSpecialUnderwriting,
+    },
+    profileSummary: {
+      ageGenderText: `${age} anos · ${gender === 'feminino' ? 'Feminino' : 'Masculino'} (${ageGroup})`,
+      capitalFormatted: formatBRL(capital),
+      factorsList: factorsIdentified.length ? factorsIdentified : ['Nenhum fator de risco agravado'],
+    },
     plans,
-    whatsappMessage: `https://wa.me/5511999999999?text=${waMsg}`,
+    whatsappMessage: `https://wa.me/5511999999999?text=${encodeURIComponent(waMainText)}`,
   };
 }
 
-// Local simulation state-machine for complete standalone offline resilience
+// Local simulation state-machine for complete resilience
 export async function startSimulation(payload: SimulationStartPayload): Promise<SimulationStepResponse> {
-  // First attempt real server call if available
   try {
     const res = await fetch('/api/simulation/start', {
       method: 'POST',
@@ -171,7 +338,7 @@ export async function startSimulation(payload: SimulationStartPayload): Promise<
       return await res.json();
     }
   } catch {
-    // Graceful fallback to client engine
+    // fallback to client engine
   }
 
   const sessionId = 'azos-' + Math.random().toString(36).substring(2, 9);
@@ -180,7 +347,8 @@ export async function startSimulation(payload: SimulationStartPayload): Promise<
   return {
     sessionId,
     stepId: 'name',
-    question: 'Olá! Sou o Consultor Digital da Takeda Corretora. 🤝\nEm parceria oficial com a Azos Seguros, preparamos uma simulação 100% digital, transparente e sem burocracia.\n\nPara começarmos com um atendimento personalizado, como posso te chamar?',
+    question:
+      'Olá! Sou o Consultor Digital da Takeda Corretora. 🤝\nEm parceria com a Azos Seguros, preparamos uma simulação com motor atuarial de precisão.\n\nPara começarmos com um atendimento personalizado, como posso te chamar?',
     contextExplanation: 'Seu nome será utilizado para identificar sua simulação e personalizar suas coberturas.',
     inputType: 'text',
     isFinished: false,
@@ -188,7 +356,6 @@ export async function startSimulation(payload: SimulationStartPayload): Promise<
 }
 
 export async function answerSimulation(payload: SimulationAnswerPayload): Promise<SimulationStepResponse> {
-  // First attempt real server call if available
   try {
     const res = await fetch('/api/simulation/answer', {
       method: 'POST',
@@ -199,7 +366,7 @@ export async function answerSimulation(payload: SimulationAnswerPayload): Promis
       return await res.json();
     }
   } catch {
-    // Graceful fallback to client engine
+    // fallback to client engine
   }
 
   const { sessionId, stepId, answer } = payload;
@@ -212,8 +379,8 @@ export async function answerSimulation(payload: SimulationAnswerPayload): Promis
       return {
         sessionId,
         stepId: 'birthdate',
-        question: `Muito prazer, ${String(answer).trim()}! É uma honra te atender.\n\nPara calcularmos a taxa justa e exata de acordo com a tabela atuarial oficial da Azos, qual é a sua data de nascimento?`,
-        contextExplanation: 'A idade atuarial define o custo exato do risco e garante que você não pague a mais.',
+        question: `Muito prazer, ${String(answer).trim()}! É uma honra te atender.\n\nPara calibrarmos a faixa etária atuarial, qual é a sua data de nascimento?`,
+        contextExplanation: 'A idade define a faixa atuarial SUSEP e garante o valor justo sem cobranças indevidas.',
         inputType: 'date',
         isFinished: false,
       };
@@ -222,12 +389,13 @@ export async function answerSimulation(payload: SimulationAnswerPayload): Promis
       return {
         sessionId,
         stepId: 'gender',
-        question: 'Perfeito. As seguradoras utilizam a tábua biométrica regulamentada pela SUSEP para calibrar os planos. Qual é o seu sexo atribuído no nascimento?',
-        contextExplanation: 'Mulheres e homens possuem estatísticas atuariais distintas de expectativa de vida.',
+        question:
+          'As tábuas biométricas atuariais oficiais consideram o sexo biológico atribuído no nascimento. Qual é o seu?',
+        contextExplanation: 'Mulheres e homens possuem fatores atuariais distintos de longevidade e risco.',
         inputType: 'choice',
         options: [
-          { label: 'Feminino', value: 'feminino' },
           { label: 'Masculino', value: 'masculino' },
+          { label: 'Feminino', value: 'feminino' },
         ],
         isFinished: false,
       };
@@ -237,11 +405,11 @@ export async function answerSimulation(payload: SimulationAnswerPayload): Promis
         sessionId,
         stepId: 'smoker',
         question: 'Você fuma ou consumiu cigarros tradicionais, eletrônicos (vapes) ou narguilé nos últimos 24 meses?',
-        contextExplanation: 'A Azos concede condições especiais e tarifas reduzidas para não-fumantes.',
+        contextExplanation: 'A condição de não-fumante garante tarifa base sem sobretaxa atuarial (F1).',
         inputType: 'choice',
         options: [
           { label: 'Não sou fumante', value: 'nao' },
-          { label: 'Sou fumante', value: 'sim' },
+          { label: 'Sou fumante / Vape ativo (F1)', value: 'sim' },
         ],
         isFinished: false,
       };
@@ -250,17 +418,14 @@ export async function answerSimulation(payload: SimulationAnswerPayload): Promis
       return {
         sessionId,
         stepId: 'profession',
-        question: 'Qual é a sua principal profissão ou área de atuação? Isso nos ajuda a verificar coberturas de invalidez e renda por afastamento.',
-        contextExplanation: 'Atividades específicas possuem direito a coberturas adicionais como DIT (Renda por Incapacidade).',
+        question: 'Qual é o seu tipo de atividade ou ocupação profissional principal?',
+        contextExplanation: 'Atividades operacionais de maior exposição física possuem enquadramento específico (F2).',
         inputType: 'profession',
         options: [
-          { label: 'Médico / Saúde', value: 'saude' },
-          { label: 'Empresário / Gestão', value: 'empresario' },
-          { label: 'Engenharia / Tecnologia', value: 'engenharia_ti' },
-          { label: 'Advocacia / Jurídico', value: 'juridico' },
-          { label: 'Servidor Público', value: 'servidor' },
-          { label: 'Comércio / Autônomo', value: 'autonomo' },
-          { label: 'Outra Atividade', value: 'outra' },
+          { label: 'Administrativo / Escritório / TI / Gestão', value: 'escritorio' },
+          { label: 'Médico / Saúde / Advocacia / Autônomo', value: 'saude' },
+          { label: 'Operacional / Construção / Segurança / Transporte (F2)', value: 'operacional_risco' },
+          { label: 'Outra atividade de baixo risco físico', value: 'outra' },
         ],
         isFinished: false,
       };
@@ -268,31 +433,47 @@ export async function answerSimulation(payload: SimulationAnswerPayload): Promis
     case 'profession':
       return {
         sessionId,
-        stepId: 'objective',
-        question: 'Excelente. Qual é o principal objetivo da sua proteção hoje?',
-        contextExplanation: 'Priorizamos as coberturas ideais de acordo com o seu perfil patrimonial.',
+        stepId: 'sports',
+        question: 'Você pratica regularmente desportos ou atividades radicais de alto risco?',
+        contextExplanation:
+          'Modalidades como paraquedismo, mergulho em profundidade ou motociclismo esportivo constituem fator F3.',
         inputType: 'choice',
         options: [
-          { label: 'Proteção Familiar & Dependentes', value: 'familia' },
-          { label: 'Indenização em Diagnóstico de Doenças Graves', value: 'doencas_graves' },
-          { label: 'Manutenção de Renda por Afastamento (DIT)', value: 'renda' },
-          { label: 'Proteção Patrimonial Global 360°', value: 'completa' },
+          { label: 'Não pratico esportes de risco (academia, corrida, etc.)', value: 'nao' },
+          { label: 'Sim: Paraquedismo, Mergulho, Motociclismo radical (F3)', value: 'sim' },
         ],
         isFinished: false,
       };
 
-    case 'objective':
+    case 'sports':
+      return {
+        sessionId,
+        stepId: 'health',
+        question:
+          'Em relação ao seu histórico de saúde (DPS), possui diagnóstico prévio relevante ou condições crônicas em tratamento?',
+        contextExplanation:
+          'Condições prévias declaradas ativam a análise técnica prioritária (F4) para assegurar total validade jurídica.',
+        inputType: 'choice',
+        options: [
+          { label: 'Sem condições graves / Saúde preventiva em dia', value: 'nao' },
+          { label: 'Possuo condições sob acompanhamento médico (F4)', value: 'sim' },
+        ],
+        isFinished: false,
+      };
+
+    case 'health':
       return {
         sessionId,
         stepId: 'capital',
-        question: 'Qual valor total de Capital Segurado (indenização) você deseja simular? Você pode deslizar ou escolher um valor sugerido:',
-        contextExplanation: 'O capital segurado deve cobrir de 2 a 5 anos do custo de vida familiar ou despesas planejadas.',
+        question: 'Qual valor total de Capital Segurado (indenização) você deseja simular?',
+        contextExplanation:
+          'Recomenda-se de R$ 500.000 a R$ 2.000.000 para proteção patrimonial robusta e reposição de renda.',
         inputType: 'slider',
         sliderConfig: {
           min: 100000,
-          max: 2000000,
+          max: 3000000,
           step: 50000,
-          defaultValue: 500000,
+          defaultValue: 1000000,
         },
         isFinished: false,
       };
@@ -301,24 +482,23 @@ export async function answerSimulation(payload: SimulationAnswerPayload): Promis
       return {
         sessionId,
         stepId: 'contact',
-        question: 'Quase pronto! Para gerarmos as 3 propostas detalhadas da Azos e enviar o resumo completo para você, informe seu contato:',
+        question:
+          'Quase pronto! Para gerarmos as 3 propostas detalhadas com o enquadramento do seu cenário e enviarmos o resumo para você, informe seu contato:',
         contextExplanation: 'Seus dados são 100% confidenciais. A Takeda Corretora não envia spam.',
         inputType: 'contact',
         isFinished: false,
       };
 
     case 'contact': {
-      // Finished! Calculate proposals
       const result = calculateAzosPlans(session);
 
-      // Auto-save lead
       saveLeadLocally({
         name: String(session.name || ''),
         phone: String((session.contact as Record<string, string>)?.phone || ''),
         email: String((session.contact as Record<string, string>)?.email || ''),
         birthdate: String(session.birthdate || ''),
-        capital: Number(session.capital || 300000),
-        objective: String(session.objective || ''),
+        capital: Number(session.capital || 1000000),
+        scenarioId: result.scenario.id,
         provider: 'azos',
         createdAt: new Date().toISOString(),
       });
@@ -326,8 +506,8 @@ export async function answerSimulation(payload: SimulationAnswerPayload): Promis
       return {
         sessionId,
         stepId: 'completed',
-        question: 'Prontinho! Sua cotação oficial em parceria com a Azos Seguros foi calculada com sucesso. 🎉\n\nConfira os 3 planos desenhados sob medida para você:',
-        contextExplanation: 'Você pode contratar diretamente pelo link oficial da Azos ou falar com um consultor da Takeda no WhatsApp para personalizar.',
+        question: `Prontinho, ${result.clientName}! Sua cotação oficial foi processada pelo motor atuarial. 🎉\n\nConfira abaixo o resumo do seu perfil, enquadramento de cenário e as 3 opções de planos calculadas com faixas reais de mercado:`,
+        contextExplanation: result.scenario.transparencyNote,
         inputType: 'result',
         isFinished: true,
         result,
@@ -349,21 +529,12 @@ export async function answerSimulation(payload: SimulationAnswerPayload): Promis
 // Save lead to local CRM / server
 export async function saveLeadLocally(lead: LeadPayload): Promise<void> {
   try {
-    // 1. Post to backend
     fetch('/api/leads', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(lead),
     }).catch(() => {});
-
-    // 2. Persist to localStorage for guaranteed CRM retention
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('takeda_leads') || '[]';
-      const parsed: LeadPayload[] = JSON.parse(stored);
-      parsed.push({ ...lead, createdAt: new Date().toISOString() });
-      localStorage.setItem('takeda_leads', JSON.stringify(parsed));
-    }
   } catch {
-    // non-blocking
+    // Ignore
   }
 }
