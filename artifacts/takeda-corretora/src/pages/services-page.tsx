@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowUpRight, Instagram, Menu, ShieldCheck, X } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Instagram, Menu, MessageCircle, ShieldCheck, X } from 'lucide-react';
 import { servicesData } from '@/data/services';
 import { InstagramEmbed } from '@/components/instagram-embed';
 
@@ -133,14 +133,33 @@ export default function ServicesPage() {
             Seguro de vida e previdência privada<br />
             com atendimento consultivo e independente.
           </p>
-          <a href="https://www.instagram.com/takedacorretora_/" target="_blank" rel="noreferrer">
-            @takedacorretora_ <ArrowUpRight size={14} />
-          </a>
+          <div className="footer-links-group">
+            <a href="https://wa.me/5511975519176" target="_blank" rel="noreferrer">
+              WhatsApp: (11) 97551-9176 <ArrowUpRight size={14} />
+            </a>
+            <a href="https://www.instagram.com/takedacorretora_/" target="_blank" rel="noreferrer">
+              @takedacorretora_ <ArrowUpRight size={14} />
+            </a>
+          </div>
           <span className="copyright">
             © {new Date().getFullYear()} Takeda Corretora · Todos os direitos reservados
           </span>
         </div>
       </footer>
+
+      {/* Floating WhatsApp Action Button */}
+      <a
+        href="https://wa.me/5511975519176?text=Ol%C3%A1%2C%20Takeda%20Seguros!%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20os%20servi%C3%A7os%20apresentados."
+        target="_blank"
+        rel="noreferrer"
+        className="floating-whatsapp-btn"
+        aria-label="Falar no WhatsApp: (11) 97551-9176"
+        title="Falar no WhatsApp: (11) 97551-9176"
+      >
+        <span className="floating-whatsapp-pulse" />
+        <MessageCircle size={24} />
+        <span className="floating-whatsapp-text">WhatsApp</span>
+      </a>
     </div>
   );
 }

@@ -428,7 +428,7 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
               <p>Quer que nosso consultor conclua a simulação com as mesmas condições pelo WhatsApp?</p>
             </div>
             <a
-              href={`https://wa.me/5511999999999?text=${encodeURIComponent(
+              href={`https://wa.me/5511975519176?text=${encodeURIComponent(
                 `Olá! Estava simulando no site da Takeda e gostaria que um consultor concluísse minha cotação personalizada.`
               )}`}
               target="_blank"

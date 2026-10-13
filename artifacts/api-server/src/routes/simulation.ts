@@ -147,7 +147,7 @@ function calculateAzosPlans(data: Record<string, unknown>) {
       `• Titular: ${name} (${age} anos, ${gender})\n` +
       (factorsIdentified.length ? `• Fatores Informados: ${factorsIdentified.join(", ")}\n` : "") +
       `\nGostaria de agendar a conversa técnica e formalizar a contratação com o consultor.`;
-    return `https://wa.me/5511999999999?text=${encodeURIComponent(text)}`;
+    return `https://wa.me/5511975519176?text=${encodeURIComponent(text)}`;
   };
 
   const plans = [
@@ -250,7 +250,7 @@ function calculateAzosPlans(data: Record<string, unknown>) {
       factorsList: factorsIdentified.length ? factorsIdentified : ["Nenhum fator de risco agravado"],
     },
     plans,
-    whatsappMessage: `https://wa.me/5511999999999?text=${encodeURIComponent(waMainText)}`,
+    whatsappMessage: `https://wa.me/5511975519176?text=${encodeURIComponent(waMainText)}`,
   };
 }
 

@@ -11,6 +11,7 @@ import {
   HeartHandshake,
   Instagram,
   Menu,
+  MessageCircle,
   ShieldCheck,
   Sparkles,
   X,
@@ -699,19 +700,35 @@ function HomePage() {
                 todas as suas dúvidas.
               </p>
 
-              <a
-                className="instagram-link"
-                href="https://www.instagram.com/takedacorretora_/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span className="instagram-icon">ig</span>
-                <span>
-                  <small>ACOMPANHE NO INSTAGRAM</small>
-                  @takedacorretora_
-                </span>
-                <ArrowUpRight size={18} />
-              </a>
+              <div className="contact-links-stack">
+                <a
+                  className="whatsapp-link"
+                  href="https://wa.me/5511975519176?text=Ol%C3%A1%2C%20Takeda%20Seguros!%20Gostaria%20de%20conversar%20sobre%20seguros%20e%20planejamento."
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span className="whatsapp-icon">wa</span>
+                  <span>
+                    <small>FALE PELO WHATSAPP</small>
+                    (11) 97551-9176
+                  </span>
+                  <ArrowUpRight size={18} />
+                </a>
+
+                <a
+                  className="instagram-link"
+                  href="https://www.instagram.com/takedacorretora_/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span className="instagram-icon">ig</span>
+                  <span>
+                    <small>ACOMPANHE NO INSTAGRAM</small>
+                    @takedacorretora_
+                  </span>
+                  <ArrowUpRight size={18} />
+                </a>
+              </div>
 
               <div className="contact-note">
                 <HeartHandshake size={20} />
@@ -729,15 +746,25 @@ function HomePage() {
                 Conte o que você está buscando ou tire suas dúvidas sobre sua apólice atual.
                 A Takeda avalia com calma e transparência.
               </p>
-              <a
-                className="button button-light"
-                href="https://www.instagram.com/takedacorretora_/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Falar pelo Instagram <ArrowUpRight size={17} />
-              </a>
-              <small>Atendimento ético e confidencial.</small>
+              <div className="contact-card-actions">
+                <a
+                  className="button button-whatsapp"
+                  href="https://wa.me/5511975519176?text=Ol%C3%A1%2C%20Takeda%20Seguros!%20Gostaria%20de%20agendar%20uma%20conversa%20consultiva."
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Falar no WhatsApp <ArrowUpRight size={17} />
+                </a>
+                <a
+                  className="button button-light"
+                  href="https://www.instagram.com/takedacorretora_/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Instagram <ArrowUpRight size={17} />
+                </a>
+              </div>
+              <small>Atendimento ético e confidencial · (11) 97551-9176</small>
               <span className="card-corner" aria-hidden="true" />
             </div>
           </div>
@@ -761,12 +788,31 @@ function HomePage() {
             Seguro de vida e previdência privada<br />
             com atendimento consultivo e independente.
           </p>
-          <a href="https://www.instagram.com/takedacorretora_/" target="_blank" rel="noreferrer">
-            @takedacorretora_ <ArrowUpRight size={14} />
-          </a>
+          <div className="footer-links-group">
+            <a href="https://wa.me/5511975519176" target="_blank" rel="noreferrer">
+              WhatsApp: (11) 97551-9176 <ArrowUpRight size={14} />
+            </a>
+            <a href="https://www.instagram.com/takedacorretora_/" target="_blank" rel="noreferrer">
+              @takedacorretora_ <ArrowUpRight size={14} />
+            </a>
+          </div>
           <span className="copyright">© {new Date().getFullYear()} Takeda Corretora · Todos os direitos reservados</span>
         </div>
       </footer>
+
+      {/* Floating WhatsApp Action Button */}
+      <a
+        href="https://wa.me/5511975519176?text=Ol%C3%A1%2C%20Takeda%20Seguros!%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20seguros%20e%20previd%C3%AAncia."
+        target="_blank"
+        rel="noreferrer"
+        className="floating-whatsapp-btn"
+        aria-label="Falar no WhatsApp: (11) 97551-9176"
+        title="Falar no WhatsApp: (11) 97551-9176"
+      >
+        <span className="floating-whatsapp-pulse" />
+        <MessageCircle size={24} />
+        <span className="floating-whatsapp-text">WhatsApp</span>
+      </a>
     </div>
   );
 }
