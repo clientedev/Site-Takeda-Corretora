@@ -314,7 +314,7 @@ function HomePage() {
               <div className="portrait-image-wrapper">
                 <img
                   src="/images/takeda-profile.png"
-                  alt="Profissional da Takeda Corretora"
+                  alt="Proteção Familiar e Financeira - Takeda Corretora"
                   className="portrait-img"
                 />
                 <div className="portrait-badge">

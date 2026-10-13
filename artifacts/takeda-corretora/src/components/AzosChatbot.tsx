@@ -194,7 +194,7 @@ export function AzosChatbot({ onClose, isModal = false }: AzosChatbotProps) {
         <div className="azos-chatbot-identity">
           <div className="azos-avatar-wrap">
             <img
-              src="/images/takeda-profile.png"
+              src="/images/takeda-logo-official.png"
               alt="Consultor Takeda"
               className="azos-avatar-img"
               onError={(e) => {

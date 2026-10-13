@@ -944,7 +944,7 @@ button { font: inherit; }
   width: 100%;
   aspect-ratio: 0.93;
   object-fit: cover;
-  object-position: center 24%;
+  object-position: center;
   transition: transform 0.6s ease;
 }
 
